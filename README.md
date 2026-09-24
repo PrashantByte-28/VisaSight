@@ -12,10 +12,10 @@ Docker on AWS EC2, with GitHub Actions handling the CI/CD.
 
 Dataset used: [EasyVisa dataset on Kaggle]
 
-## Live Demo
 
-You can access the deployed FastAPI application here:
-[http://13.205.6.187:8080/]
+## 🌐 Live Demo
+
+👉 https://visasight.duckdns.org/
 
 This IP is a static Elastic IP, so the link stays the same across
 restarts — but the app will only be reachable while the EC2 instance
@@ -31,6 +31,15 @@ and these gave the best results on this dataset.
 For monitoring, I added Evidently AI so I could check for data drift later
 on, since that's something that gets skipped a lot in smaller projects but
 matters in a real setup.
+
+## 🐍 Python Version
+
+The project uses **Python 3.8** instead of the latest Python version.
+
+I chose Python 3.8 mainly for **dependency compatibility and stability**. Some of the libraries and versions used in this project were developed and tested with Python 3.8, so using the same version helped avoid compatibility issues and ensured consistent behavior across development and deployment environments.
+
+For a production ML project, I preferred a **stable and compatible environment** over upgrading to the latest Python version without testing all dependencies.
+
 
 ## Stack
 
@@ -92,34 +101,38 @@ python app.py
 
 and go to `localhost:8080` in your browser.
 
-## Deployment
+## 🚀 Deployment
 
-This part took me the longest to get right, honestly. The flow is:
+The application is deployed using **Docker, AWS EC2, Amazon ECR, GitHub Actions, Nginx, and DuckDNS**.
 
+### Deployment Flow
+
+```text
+GitHub
+   ↓
+GitHub Actions
+   ↓
+Docker Image → Amazon ECR
+   ↓
+AWS EC2
+   ↓
+Nginx
+   ↓
+FastAPI Application
 ```
-push to GitHub -> GitHub Actions builds a Docker image
--> pushes it to ECR -> EC2 pulls the image -> restarts the container
-```
 
-Steps I followed to set it up:
+### Key Components
 
-1. Created an IAM user with `AmazonEC2ContainerRegistryFullAccess` and `AmazonEC2FullAccess`
-2. Created an ECR repo to hold the image
-3. Spun up an EC2 instance (Ubuntu) and installed Docker on it:
-   ```bash
-   sudo apt-get update -y && sudo apt-get upgrade -y
-   curl -fsSL https://get.docker.com -o get-docker.sh
-   sudo sh get-docker.sh
-   sudo usermod -aG docker ubuntu
-   newgrp docker
-   ```
-4. Registered that same EC2 instance as a self-hosted GitHub Actions runner
-   (Settings → Actions → Runners → New self-hosted runner)
-5. Added these as repo secrets: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`,
-   `AWS_DEFAULT_REGION`, `ECR_REPO`
+* **GitHub Actions** — CI/CD automation
+* **Docker** — Containerization
+* **Amazon ECR** — Docker image storage
+* **AWS EC2** — Application hosting
+* **Nginx** — Reverse proxy
+* **DuckDNS** — Domain mapping
+* **Let's Encrypt / Certbot** — HTTPS/SSL
 
-After that, every push to `main` rebuilds and redeploys automatically —
-no manual steps.
+Every push to the `main` branch automatically builds, pushes, and deploys the latest Docker image.
+
 
 ## Things I'd still like to improve
 
