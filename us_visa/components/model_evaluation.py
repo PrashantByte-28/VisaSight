@@ -7,7 +7,7 @@ from us_visa.logger import logging
 import sys
 import pandas as pd
 from typing import Optional
-from us_visa.entity.s3_estimator import USvisaEstimator
+from us_visa.entity.local_estimator import USvisaEstimator
 from dataclasses import dataclass
 from us_visa.entity.estimator import USvisaModel
 from us_visa.entity.estimator import TargetValueMapping
@@ -36,16 +36,14 @@ class ModelEvaluation:
         Method Name :   get_best_model
         Description :   This function is used to get model in production
         
-        Output      :   Returns model object if available in s3 storage
+        Output      :   Returns model object if a saved model exists locally
         On Failure  :   Write an exception log and then raise an exception
         """
         try:
-            bucket_name = self.model_eval_config.bucket_name
-            model_path=self.model_eval_config.s3_model_key_path
-            usvisa_estimator = USvisaEstimator(bucket_name=bucket_name,
-                                               model_path=model_path)
+            model_path = self.model_eval_config.saved_model_path
+            usvisa_estimator = USvisaEstimator(model_path=model_path)
 
-            if usvisa_estimator.is_model_present(model_path=model_path):
+            if usvisa_estimator.is_model_present():
                 return usvisa_estimator
             return None
         except Exception as e:
@@ -100,11 +98,11 @@ class ModelEvaluation:
         """  
         try:
             evaluate_model_response = self.evaluate_model()
-            s3_model_path = self.model_eval_config.s3_model_key_path
+            saved_model_path = self.model_eval_config.saved_model_path
 
             model_evaluation_artifact = ModelEvaluationArtifact(
                 is_model_accepted=evaluate_model_response.is_model_accepted,
-                s3_model_path=s3_model_path,
+                saved_model_path=saved_model_path,
                 trained_model_path=self.model_trainer_artifact.trained_model_file_path,
                 changed_accuracy=evaluate_model_response.difference)
 

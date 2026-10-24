@@ -7,26 +7,28 @@ employee's education, job experience, wage, and the employer's company size.
 I didn't want to just train a model in a notebook and leave it there, so I
 built this as a full pipeline — data ingestion, validation, transformation,
 training, evaluation — and then wrapped it in a FastAPI app so you can
-actually fill out a form and get a live prediction. It's also deployed with
-Docker on AWS EC2, with GitHub Actions handling the CI/CD.
+actually fill out a form and get a live prediction. The app is deployed on
+Vercel.
 
 Dataset used: [EasyVisa dataset on Kaggle]
 
 
 ## 🌐 Live Demo
 
-👉 https://visasight.duckdns.org/
+👉 <add your Vercel URL here after deploying>
 
-This IP is a static Elastic IP, so the link stays the same across
-restarts — but the app will only be reachable while the EC2 instance
-is actually running.
 
 ## What it does
 
 You fill out a short form (continent, education, experience, wage, company
 size, etc.) and the model tells you whether it thinks the petition would be
-approved or not. Models used are XGBoost and CatBoost — I tried a few things
-and these gave the best results on this dataset.
+approved or not.
+
+During training, the pipeline tries HistGradientBoosting and RandomForest with
+a grid search and keeps the best one. Wages are converted to a yearly amount
+before modelling, because the dataset mixes hourly, weekly, monthly and yearly
+values. On held-out test data the model gets about 70% accuracy, which is
+reasonable for this dataset but means it is a demo, not something to rely on.
 
 For monitoring, I added Evidently AI so I could check for data drift later
 on, since that's something that gets skipped a lot in smaller projects but
@@ -34,22 +36,21 @@ matters in a real setup.
 
 ## 🐍 Python Version
 
-The project uses **Python 3.8** instead of the latest Python version.
+The deployed app runs on **Python 3.12** (set in `.python-version`, which
+Vercel reads).
 
-I chose Python 3.8 mainly for **dependency compatibility and stability**. Some of the libraries and versions used in this project were developed and tested with Python 3.8, so using the same version helped avoid compatibility issues and ensured consistent behavior across development and deployment environments.
-
-For a production ML project, I preferred a **stable and compatible environment** over upgrading to the latest Python version without testing all dependencies.
-
+The trained model is a pickle file, so it has to be loaded with the same
+scikit-learn version it was trained with. That is why `scikit-learn` is pinned
+in `requirements.txt`. If you retrain with a different version, update the pin
+to match.
 
 ## Stack
 
-- Python 3.8
-- Scikit-learn, XGBoost, CatBoost
-- MongoDB (for storing the raw data)
+- Python 3.12
+- Scikit-learn (HistGradientBoosting, RandomForest)
+- MongoDB (for storing the raw data, used only for training)
 - FastAPI + Jinja2 for the web app
-- Docker
-- AWS EC2 + ECR
-- GitHub Actions (self-hosted runner on the EC2 instance)
+- Vercel for hosting
 
 ## How the pipeline is structured
 
@@ -73,27 +74,10 @@ git clone https://github.com/PrashantByte-28/VisaSight.git
 cd VisaSight
 # (repo renamed from Production-Ready-Machine-Learning-Project)
 
-conda create -n visa python=3.8 -y
-conda activate visa
 pip install -r requirements.txt
 ```
 
-You'll need a MongoDB connection string and AWS keys set as environment
-variables before running anything:
-
-```bash
-export MONGODB_URL="mongodb+srv://<username>:<password>@..."
-export AWS_ACCESS_KEY_ID=<your_key>
-export AWS_SECRET_ACCESS_KEY=<your_secret>
-```
-
-Train the model:
-
-```bash
-python demo.py
-```
-
-Then run the app:
+Run the app (uses the model saved in `saved_model/`):
 
 ```bash
 python app.py
@@ -101,38 +85,33 @@ python app.py
 
 and go to `localhost:8080` in your browser.
 
-## 🚀 Deployment
+### Training the model
 
-The application is deployed using **Docker, AWS EC2, Amazon ECR, GitHub Actions, Nginx, and DuckDNS**.
+Training needs a few extra packages that the deployed app doesn't use (so they
+are not in `requirements.txt`), plus a MongoDB connection string:
 
-### Deployment Flow
-
-```text
-GitHub
-   ↓
-GitHub Actions
-   ↓
-Docker Image → Amazon ECR
-   ↓
-AWS EC2
-   ↓
-Nginx
-   ↓
-FastAPI Application
+```bash
+pip install pymongo certifi evidently imbalanced-learn neuro-mf
+export MONGODB_URL="mongodb+srv://<username>:<password>@..."
+python demo.py
 ```
 
-### Key Components
+When training finishes, the model is saved to `saved_model/model.pkl`. Logs go
+to `logs/` and intermediate files to `artifact/`.
 
-* **GitHub Actions** — CI/CD automation
-* **Docker** — Containerization
-* **Amazon ECR** — Docker image storage
-* **AWS EC2** — Application hosting
-* **Nginx** — Reverse proxy
-* **DuckDNS** — Domain mapping
-* **Let's Encrypt / Certbot** — HTTPS/SSL
+## 🚀 Deployment
 
-Every push to the `main` branch automatically builds, pushes, and deploys the latest Docker image.
+The app is deployed on **Vercel**. Vercel detects the FastAPI app in `app.py`
+automatically, so no extra configuration file is needed.
 
+```text
+GitHub  →  Vercel  →  FastAPI app (loads saved_model/model.pkl)
+```
+
+- Training does **not** run on Vercel. I train locally, commit
+  `saved_model/model.pkl`, and push.
+- The deployed app needs no environment variables, no database and no cloud keys.
+- Every push to `main` triggers a new deployment.
 
 ## Things I'd still like to improve
 
@@ -140,6 +119,7 @@ Every push to the `main` branch automatically builds, pushes, and deploys the la
 - Track experiments with MLflow instead of just comparing metrics manually
 - Handle edge cases in the form better on the frontend
 - Set up scheduled drift checks instead of only checking manually
+- Try more feature engineering to push accuracy beyond about 70%
 
 ## Author
 

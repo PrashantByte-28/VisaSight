@@ -1,10 +1,28 @@
 import sys
 
+import pandas as pd
 from pandas import DataFrame
 from sklearn.pipeline import Pipeline
 
 from us_visa.exception import USvisaException
 from us_visa.logger import logging
+
+
+# Approximate number of pay periods in a year, used to put every wage on the same scale.
+WAGE_UNIT_TO_YEARLY = {"Hour": 2080, "Week": 52, "Month": 12, "Year": 1}
+
+
+def convert_wage_to_yearly(dataframe: DataFrame) -> DataFrame:
+    """
+    Converts prevailing_wage to a yearly amount using unit_of_wage
+    (Hour x 2080, Week x 52, Month x 12, Year x 1).
+    Used for both training and prediction so the model always sees the same scale.
+    """
+    df = dataframe.copy()
+    wage = pd.to_numeric(df["prevailing_wage"])
+    factor = df["unit_of_wage"].map(WAGE_UNIT_TO_YEARLY).fillna(1)
+    df["prevailing_wage"] = wage * factor
+    return df
 
 
 class TargetValueMapping:
@@ -40,6 +58,7 @@ class USvisaModel:
         try:
             logging.info("Using the trained model to get predictions")
 
+            dataframe = convert_wage_to_yearly(dataframe)
             transformed_feature = self.preprocessing_object.transform(dataframe)
 
             logging.info("Used the trained model to get predictions")
@@ -53,4 +72,3 @@ class USvisaModel:
 
     def __str__(self):
         return f"{type(self.trained_model_object).__name__}()"
-    

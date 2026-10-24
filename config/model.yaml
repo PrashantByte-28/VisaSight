@@ -6,42 +6,35 @@ grid_search:
     verbose: 1
 model_selection:
   module_0:
-    class: KNeighborsClassifier
-    module: sklearn.neighbors
+    class: HistGradientBoostingClassifier
+    module: sklearn.ensemble
     params:
-      algorithm: kd_tree
-      weights: uniform
-      n_neighbors: 3 
+      max_iter: 200
+      learning_rate: 0.1
+      max_depth: 6
     search_param_grid:
-      algorithm:
-      - auto
-      - ball_tree
-      - kd_tree
-      - brute
-      weights:
-      - uniform
-      - distance
-      n_neighbors:
-      - 3
-      - 5
-      - 9
-    
-    module_1:
+      max_iter:
+      - 100
+      - 200
+      learning_rate:
+      - 0.05
+      - 0.1
+      max_depth:
+      - 6
+      - 10
+  module_1:
     class: RandomForestClassifier
     module: sklearn.ensemble
     params:
-      max_depth: 10
+      max_depth: 15
       max_features: sqrt
-      n_estimators: 3
+      n_estimators: 100
     search_param_grid:
       max_depth:
       - 10
       - 15
-      - 20
       max_features:
       - sqrt
-      - log2
       n_estimators:
-      - 3
-      - 5
-      - 9
+      - 50
+      - 100

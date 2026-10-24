@@ -1,7 +1,11 @@
 import os
+from pathlib import Path
 from us_visa.constant import *
 from dataclasses import dataclass
 from datetime import datetime
+
+# Trained model bundled with the project: <project_root>/saved_model/<MODEL_FILE_NAME>
+SAVED_MODEL_PATH: str = str(Path(__file__).resolve().parents[2] / "saved_model" / MODEL_FILE_NAME)
 
 TIMESTAMP: str = datetime.now().strftime("%m_%d_%Y_%H_%M_%S")
 
@@ -66,28 +70,17 @@ class ModelTrainerConfig:
 @dataclass
 class ModelEvaluationConfig:
     changed_threshold_score: float = MODEL_EVALUATION_CHANGED_THRESHOLD_SCORE
-    bucket_name: str = MODEL_BUCKET_NAME
-    s3_model_key_path: str = MODEL_FILE_NAME
+    saved_model_path: str = SAVED_MODEL_PATH
 
 
 
 @dataclass
 class ModelPusherConfig:
-    bucket_name: str = MODEL_BUCKET_NAME
-    s3_model_key_path: str = MODEL_FILE_NAME
+    saved_model_path: str = SAVED_MODEL_PATH
 
 
 
 
 @dataclass
 class USvisaPredictorConfig:
-    model_file_path: str = MODEL_FILE_NAME
-    model_bucket_name: str = MODEL_BUCKET_NAME
-
-
-
-
-
-    
-
-
+    model_file_path: str = SAVED_MODEL_PATH

@@ -1,4 +1,3 @@
-
 import os
 import sys
 from pathlib import Path
@@ -197,8 +196,8 @@ async def predictRouteClient(request: Request):
         # Convert the input into a DataFrame.
         usvisa_df = usvisa_data.get_usvisa_input_data_frame()
 
-        # Load the trained model from the configured S3 location
-        # and predict the result.
+        # Load the bundled trained model (saved_model/) and
+        # predict the result.
         model_predictor = USvisaClassifier()
         prediction = model_predictor.predict(
             dataframe=usvisa_df
