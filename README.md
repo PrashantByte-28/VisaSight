@@ -15,7 +15,7 @@ Dataset used: [EasyVisa dataset on Kaggle]
 
 ## 🌐 Live Demo
 
-👉 <add your Vercel URL here after deploying>
+👉 [visa-sight.vercel.app](https://visa-sight.vercel.app/)
 
 
 ## What it does
