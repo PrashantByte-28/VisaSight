@@ -205,9 +205,9 @@ async def predictRouteClient(request: Request):
 
         # Preserve the existing result labels.
         status = (
-            "Visa-approved"
+            "Visa Not-Approved"
             if prediction == 1
-            else "Visa Not-Approved"
+            else "Visa-approved"
         )
 
         # Render the existing result page.

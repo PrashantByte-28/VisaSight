@@ -154,6 +154,7 @@ class TrainPipeline:
 
             if not model_evaluation_artifact.is_model_accepted:
                 logging.info(f"Model not accepted.")
+                return
             model_pusher_artifact = self.start_model_pusher(model_evaluation_artifact=model_evaluation_artifact)
 
         except Exception as e:

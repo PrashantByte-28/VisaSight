@@ -7,13 +7,13 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler, OneHotEncoder, OrdinalEncoder, PowerTransformer
 from sklearn.compose import ColumnTransformer
 
-from us_visa.constants import TARGET_COLUMN, SCHEMA_FILE_PATH, CURRENT_YEAR
+from us_visa.constant import TARGET_COLUMN, SCHEMA_FILE_PATH, CURRENT_YEAR
 from us_visa.entity.config_entity import DataTransformationConfig
 from us_visa.entity.artifact_entity import DataTransformationArtifact, DataIngestionArtifact, DataValidationArtifact
 from us_visa.exception import USvisaException
 from us_visa.logger import logging
 from us_visa.utils.main_utils import save_object, save_numpy_array_data, read_yaml_file, drop_columns
-from us_visa.entity.estimator import TargetValueMapping
+from us_visa.entity.estimator import TargetValueMapping, convert_wage_to_yearly
 
 
 
@@ -111,6 +111,9 @@ class DataTransformation:
                 input_feature_train_df = train_df.drop(columns=[TARGET_COLUMN], axis=1)
                 target_feature_train_df = train_df[TARGET_COLUMN]
 
+                # Same wage conversion that USvisaModel.predict() applies, so training and prediction match
+                input_feature_train_df = convert_wage_to_yearly(input_feature_train_df)
+
                 logging.info("Got train features and test features of Training dataset")
 
                 input_feature_train_df['company_age'] = CURRENT_YEAR-input_feature_train_df['yr_of_estab']
@@ -129,6 +132,7 @@ class DataTransformation:
 
 
                 input_feature_test_df = test_df.drop(columns=[TARGET_COLUMN], axis=1)
+                input_feature_test_df = convert_wage_to_yearly(input_feature_test_df)
 
                 target_feature_test_df = test_df[TARGET_COLUMN]
 
@@ -171,13 +175,8 @@ class DataTransformation:
 
                 logging.info("Applied SMOTEENN on training dataset")
 
-                logging.info("Applying SMOTEENN on testing dataset")
-
-                input_feature_test_final, target_feature_test_final = smt.fit_resample(
-                    input_feature_test_arr, target_feature_test_df
-                )
-
-                logging.info("Applied SMOTEENN on testing dataset")
+                # Test data is kept as real rows (no resampling) so metrics are honest
+                input_feature_test_final, target_feature_test_final = input_feature_test_arr, target_feature_test_df
 
                 logging.info("Created train array and test array")
 
