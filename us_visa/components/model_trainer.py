@@ -56,7 +56,7 @@ class ModelTrainer:
         
         except Exception as e:
             raise USvisaException(e, sys) from e
-
+        
 
     def initiate_model_trainer(self, ) -> ModelTrainerArtifact:
         logging.info("Entered initiate_model_trainer method of ModelTrainer class")

@@ -7,13 +7,13 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler, OneHotEncoder, OrdinalEncoder, PowerTransformer
 from sklearn.compose import ColumnTransformer
 
-from us_visa.constant import TARGET_COLUMN, SCHEMA_FILE_PATH, CURRENT_YEAR
+from us_visa.constants import TARGET_COLUMN, SCHEMA_FILE_PATH, CURRENT_YEAR
 from us_visa.entity.config_entity import DataTransformationConfig
 from us_visa.entity.artifact_entity import DataTransformationArtifact, DataIngestionArtifact, DataValidationArtifact
 from us_visa.exception import USvisaException
 from us_visa.logger import logging
 from us_visa.utils.main_utils import save_object, save_numpy_array_data, read_yaml_file, drop_columns
-from us_visa.entity.estimator import TargetValueMapping, convert_wage_to_yearly
+from us_visa.entity.estimator import TargetValueMapping
 
 
 
@@ -117,10 +117,6 @@ class DataTransformation:
 
                 logging.info("Added company_age column to the Training dataset")
 
-                input_feature_train_df = convert_wage_to_yearly(input_feature_train_df)
-
-                logging.info("Converted prevailing_wage to yearly for the Training dataset")
-
                 drop_cols = self._schema_config['drop_columns']
 
                 logging.info("drop the columns in drop_cols of Training dataset")
@@ -140,10 +136,6 @@ class DataTransformation:
                 input_feature_test_df['company_age'] = CURRENT_YEAR-input_feature_test_df['yr_of_estab']
 
                 logging.info("Added company_age column to the Test dataset")
-
-                input_feature_test_df = convert_wage_to_yearly(input_feature_test_df)
-
-                logging.info("Converted prevailing_wage to yearly for the Test dataset")
 
                 input_feature_test_df = drop_columns(df=input_feature_test_df, cols = drop_cols)
 
