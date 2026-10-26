@@ -128,12 +128,9 @@ Run this command from the project's root directory, where the `Dockerfile` is lo
 
 ```bash
 docker build -t visa-app .
-<<<<<<< HEAD
 
 docker build -t visasight .
  (Readme file updated)
-=======
->>>>>>> b8bfec9 (docs: improve VisaSight README and Docker instructions)
 ```
 
 ### 2. Start the Container
@@ -141,14 +138,12 @@ docker build -t visasight .
 Run the container in the background and map port 8080:
 
 ```bash
-<<<<<<< HEAD
+
 docker run --rm -p 8080:8080 visa-app
 
 docker run --rm -p 8080:8080 visasight
  (Readme file updated)
-=======
 docker run -d --name visa-app-container -p 8080:8080 visa-app
->>>>>>> b8bfec9 (docs: improve VisaSight README and Docker instructions)
 ```
 
 ### 3. Open the Application
@@ -235,14 +230,12 @@ Python · Machine Learning · Supervised Learning · Classification · Random Fo
 
 ## Author
 
-<<<<<<< HEAD
 **Prashant Kumar Mishra**  
 GitHub: https://github.com/PrashantByte-28  
 LinkedIn: https://www.linkedin.com/in/prashant-kumar-mishra-356004261
 
 LinkedIn: https://www.linkedin.com/in/prashant-kumar-mishra-356004261
  (Readme file updated)
-=======
 **Prashant Kumar Mishra**
 
 - GitHub: https://github.com/PrashantByte-28
@@ -251,4 +244,4 @@ LinkedIn: https://www.linkedin.com/in/prashant-kumar-mishra-356004261
 ---
 
 *Built as a machine learning portfolio project to demonstrate model development, API integration, containerization, and deployment.*
->>>>>>> b8bfec9 (docs: improve VisaSight README and Docker instructions)
+
