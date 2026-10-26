@@ -1,156 +1,254 @@
 # VisaSight — US Visa Approval Prediction System
 
-**VisaSight** is a machine learning application that predicts the likely outcome of a US work-visa petition from applicant, job, wage, and employer attributes. It combines a modular ML pipeline with a FastAPI web interface, Docker containerization, and a live Vercel deployment.
+VisaSight is an end-to-end machine learning application that predicts the likely outcome of a US visa petition based on applicant, job, wage, and employer attributes. The project combines a modular ML pipeline, a FastAPI web interface, Docker containerization, and Vercel deployment.
 
-> **Important:** VisaSight is an educational decision-support demo, not an official immigration tool. Its predictions are estimates and must not be used as the sole basis for immigration, employment, or legal decisions.
+> **Disclaimer:** VisaSight is an educational machine learning project. Its predictions are estimates based on historical data and should not be used as the sole basis for immigration, employment, or legal decisions.
 
 ## Project Overview
 
-VisaSight demonstrates an end-to-end machine learning workflow for estimating whether a US visa petition is likely to be certified or denied based on patterns in historical data. The project covers data processing, model selection, evaluation, model artifact management, and serving predictions through a web application.
+The project uses the EasyVisa dataset from Kaggle, containing **25,481 records**, to build a binary classification model that predicts whether a visa petition is likely to be certified or denied.
 
-The model was developed using the EasyVisa dataset from Kaggle (25,481 records). The reported held-out test accuracy is approximately **70%**. Accuracy is the currently documented evaluation metric; precision, recall, F1-score, and a confusion matrix should also be evaluated before drawing stronger conclusions about model performance.
+The application demonstrates the complete machine learning workflow, including data ingestion, validation, preprocessing, model selection, evaluation, and prediction serving.
 
-## Key Features
+- **Reported test accuracy:** Approximately 70%
+- **Machine learning algorithm:** Random Forest Classifier
+- **Model tuning:** GridSearchCV with 3-fold cross-validation
+- **Backend:** FastAPI
+- **Containerization:** Docker
+- **Deployment:** Vercel
 
-- **Binary classification:** predicts a likely visa-petition outcome from submitted features.
-- **Modular ML pipeline:** separates data ingestion, validation, transformation, model training, and evaluation.
-- **Model selection:** uses scikit-learn's `GridSearchCV` with cross-validation to tune a Random Forest classifier.
-- **Wage normalization:** converts wage values to an annual basis to handle records expressed using different pay periods.
-- **Prediction web app:** provides a form-based interface built with FastAPI and Jinja2.
-- **Model artifact loading:** serves predictions using a previously trained model artifact; model training is not run during a Vercel prediction request.
-- **Data-drift exploration:** includes Evidently AI for examining potential data drift.
-- **Docker containerization:** includes a Dockerfile to build an image for running the application in a container.
-- **Cloud deployment:** the prediction application is deployed on Vercel.
-
-## Technical Skills Demonstrated
-
-Python · Machine Learning · Supervised Learning · Classification · Random Forest · Scikit-learn · GridSearchCV · Cross-Validation · Data Preprocessing · Feature Transformation · Model Evaluation · Pipeline Design · FastAPI · REST API Concepts · Jinja2 · Docker · Containerization · MongoDB (training-data ingestion) · Evidently AI · Git · GitHub · Vercel Deployment
-
-## Technology Stack
-
-| Area | Tools |
-|---|---|
-| Language | Python 3.12 for deployment |
-| Machine learning | scikit-learn, Random Forest, GridSearchCV |
-| Data processing | pandas, NumPy, SciPy |
-| API and interface | FastAPI, Uvicorn, Jinja2 |
-| Configuration and artifacts | YAML, dill, serialized model artifact |
-| Training data ingestion | MongoDB |
-| Monitoring exploration | Evidently AI |
-| Containerization | Docker |
-| Deployment | Vercel, GitHub |
-
-## Machine Learning Workflow
-
-1. **Data ingestion:** retrieves training data through the project's ingestion component.
-2. **Data validation:** checks the incoming dataset against the project's schema and validation rules.
-3. **Data transformation:** prepares model features and normalizes wage values to an annual basis.
-4. **Model training and selection:** tunes the configured Random Forest model using `GridSearchCV` with 3-fold cross-validation.
-5. **Evaluation:** evaluates the selected model on held-out test data. The currently documented test accuracy is approximately 70%.
-6. **Prediction serving:** the FastAPI application loads the saved model artifact and returns a prediction from the submitted form.
-7. **Monitoring exploration:** Evidently AI is included for examining potential data drift; scheduled production drift monitoring is not currently claimed.
-
-## Repository Structure
-
-The project follows a modular structure:
-
-```text
-constants/   # Fixed values and configuration
-entity/      # Configuration and artifact entities
-components/  # Ingestion, validation, transformation, training, evaluation
-pipeline/    # Training and prediction pipeline orchestration
-config/      # Model and data-schema configuration
-templates/   # Jinja2 HTML templates
-static/      # Frontend assets
-saved_model/ # Serialized model artifact used by the app
-app.py       # FastAPI application entry point
-demo.py      # Local training workflow entry point
-Dockerfile   # Container image definition
-```
-
-Some paths may differ as the repository evolves; use the actual source tree as the source of truth.
+Accuracy is the currently documented evaluation metric. Further evaluation using precision, recall, F1-score, and a confusion matrix is recommended.
 
 ## Live Demo
 
 **Application:** https://visa-sight.vercel.app/
 
-## Run Locally
+## Key Features
 
-### 1. Clone the repository
+- **Visa outcome prediction:** Predicts a likely petition outcome from submitted applicant and employer information.
+- **Modular ML pipeline:** Separates data ingestion, validation, transformation, model training, and evaluation.
+- **Random Forest classification:** Uses an ensemble learning algorithm for binary classification.
+- **Hyperparameter tuning:** Uses GridSearchCV and cross-validation to select model settings.
+- **Wage normalization:** Converts wage values to an annual basis to handle different pay periods.
+- **FastAPI web application:** Provides a form-based interface for submitting information and viewing predictions.
+- **Model artifact loading:** Loads a previously trained model for inference rather than training it for each prediction.
+- **Data drift exploration:** Includes Evidently AI for examining potential data drift.
+- **Docker containerization:** Packages application code and dependencies into a reproducible container image.
+- **Cloud deployment:** Makes the prediction application accessible through Vercel.
+
+## Technology Stack
+
+| Category | Technologies |
+|---|---|
+| Programming language | Python |
+| Machine learning | Scikit-learn, Random Forest, GridSearchCV |
+| Data processing | Pandas, NumPy, SciPy |
+| Backend and API | FastAPI, Uvicorn |
+| Frontend | HTML, CSS, Jinja2 |
+| Data ingestion | MongoDB |
+| Configuration | YAML |
+| Model serialization | Pickle/serialized model artifacts, dill |
+| Data drift exploration | Evidently AI |
+| Containerization | Docker |
+| Version control | Git, GitHub |
+| Deployment | Vercel |
+
+## Machine Learning Workflow
+
+1. **Data ingestion:** Retrieves the training data through the project's ingestion component.
+2. **Data validation:** Checks incoming data against the configured schema and validation rules.
+3. **Data transformation:** Prepares features for model training and normalizes wage values.
+4. **Model training:** Trains a Random Forest classifier on the prepared dataset.
+5. **Hyperparameter tuning:** Uses GridSearchCV with 3-fold cross-validation to search configured model parameters.
+6. **Model evaluation:** Evaluates the trained model on held-out test data. The currently documented accuracy is approximately 70%.
+7. **Prediction serving:** The FastAPI application loads the saved model and generates predictions from submitted input.
+8. **Containerization:** Docker packages the application and its dependencies for local execution.
+9. **Deployment:** Vercel hosts the web application for online demonstration.
+
+## Repository Structure
+
+```text
+VisaSight/
+├── config/          # Model and data schema configuration
+├── constants/       # Project constants
+├── entity/          # Configuration and artifact entities
+├── components/      # Data ingestion, validation, transformation,
+│                    # model training, and evaluation
+├── pipeline/        # Training and prediction pipeline orchestration
+├── templates/       # Jinja2 HTML templates
+├── static/          # Static frontend assets
+├── saved_model/     # Saved model artifact
+├── app.py           # FastAPI application entry point
+├── demo.py          # Local model training workflow
+├── Dockerfile       # Docker image definition
+├── requirements.txt # Application dependencies
+└── README.md
+```
+
+Some repository paths may change as development continues. Refer to the actual source tree for the latest structure.
+
+## Getting Started
+
+### Prerequisites
+
+- Git
+- Python compatible with the pinned dependencies
+- Docker Desktop or Docker Engine (for containerized execution)
+
+### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/PrashantByte-28/VisaSight.git
 cd VisaSight
 ```
 
-### 2. Install application dependencies
-
-Use a Python version compatible with the pinned dependencies, then run:
+### 2. Install Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 3. Start the application
+### 3. Run the Application Locally
 
 ```bash
 python app.py
 ```
 
-Open http://localhost:8080 in your browser.
+Open the application in your browser:
+
+http://localhost:8080
 
 ## Run with Docker
 
-Make sure Docker Desktop (or the Docker Engine) is running, then build the image from the repository root:
+Docker provides a consistent way to package and run VisaSight without manually installing the application dependencies in your local Python environment.
+
+### 1. Build the Docker Image
+
+Run this command from the project's root directory, where the `Dockerfile` is located:
 
 ```bash
 docker build -t visa-app .
+<<<<<<< HEAD
 
 docker build -t visasight .
  (Readme file updated)
+=======
+>>>>>>> b8bfec9 (docs: improve VisaSight README and Docker instructions)
 ```
 
-Run the container and map port 8080:
+### 2. Start the Container
+
+Run the container in the background and map port 8080:
 
 ```bash
+<<<<<<< HEAD
 docker run --rm -p 8080:8080 visa-app
 
 docker run --rm -p 8080:8080 visasight
  (Readme file updated)
+=======
+docker run -d --name visa-app-container -p 8080:8080 visa-app
+>>>>>>> b8bfec9 (docs: improve VisaSight README and Docker instructions)
 ```
 
-Open http://localhost:8080 in your browser.
+### 3. Open the Application
 
-The image uses the repository's `Dockerfile`, which installs the dependencies in `requirements.txt`, copies the application files, and starts the app with `python app.py`. The saved model artifact required for inference must be present in the build context at the path expected by the application. Do not copy secrets or local environment files into the image; configure sensitive values through environment variables when required.
+Visit:
 
-### Training the model
+http://localhost:8080
 
-Training is separate from the deployed prediction application and requires additional training dependencies and a MongoDB connection configured through `MONGODB_URL`. Do not commit credentials or connection strings to Git.
+Submit a prediction to check that the web application and trained model work correctly.
+
+### 4. Verify the Container
+
+Check whether the container is running:
+
+```bash
+docker ps
+```
+
+Check the port mapping:
+
+```bash
+docker port visa-app-container
+```
+
+### 5. View Container Logs
+
+If the application does not load or a prediction fails, inspect the logs:
+
+```bash
+docker logs visa-app-container
+```
+
+### 6. Stop and Remove the Container
+
+When you finish testing, stop and remove the container:
+
+```bash
+docker stop visa-app-container
+docker rm visa-app-container
+```
+
+### Run in the Foreground Instead
+
+Alternatively, run the application directly in the foreground:
+
+```bash
+docker run --rm -p 8080:8080 visa-app
+```
+
+Press `Ctrl+C` to stop it.
+
+**Important:** The trained model artifact must exist at the path expected by the application and be included in the Docker build context. Never include API keys, database credentials, or other secrets in the Docker image or public repository.
+
+## Model Training
+
+Model training is separate from serving predictions. The training workflow may require additional dependencies and a configured MongoDB connection through the `MONGODB_URL` environment variable.
+
+Install the additional training dependencies required by the project:
 
 ```bash
 pip install pymongo certifi evidently imbalanced-learn neuro-mf
 ```
 
-Set `MONGODB_URL` in your local environment before running the training entry point. Never place real secrets directly in source code or public repository files.
+Configure the required environment variables locally before running the training workflow. Do not commit real credentials or connection strings to GitHub.
 
 ## Deployment
 
-The prediction application is hosted on Vercel. The deployment serves the FastAPI app and loads the saved model artifact. Training is performed locally and is not run as part of an incoming prediction request. Docker is provided as an additional way to package and run the application locally or in a compatible container environment.
+VisaSight is deployed on Vercel for online access. The application loads the trained model artifact to generate predictions.
 
-## Current Limitations and Next Steps
+Docker is provided as an additional method for packaging and running the application locally or in a compatible container environment. Docker containerization does not, by itself, mean that the container is deployed to a cloud service.
 
-- Evaluate precision, recall, F1-score, ROC-AUC or PR-AUC, and a confusion matrix in addition to accuracy.
-- Add unit and integration tests for data validation, transformation, model loading, and prediction endpoints.
-- Validate input ranges and handle invalid or missing form values consistently.
-- Add reproducible experiment tracking and document model versions.
-- Automate data-drift checks and define an appropriate monitoring process.
-- Review fairness, dataset limitations, and potential bias before any real-world use.
+## Current Limitations and Future Improvements
+
+- Evaluate precision, recall, F1-score, ROC-AUC or PR-AUC, and a confusion matrix.
+- Add automated unit and integration tests for data processing and prediction endpoints.
+- Improve validation and error handling for missing or invalid inputs.
+- Introduce model versioning and reproducible experiment tracking.
+- Automate data drift checks and establish an appropriate monitoring workflow.
+- Assess dataset limitations, fairness, and potential bias before considering real-world use.
+
+## Skills Demonstrated
+
+Python · Machine Learning · Supervised Learning · Classification · Random Forest · Scikit-learn · GridSearchCV · Cross-Validation · Data Preprocessing · Feature Engineering · Model Evaluation · FastAPI · REST APIs · Docker · Containerization · MongoDB · Git · GitHub · Vercel Deployment
 
 ## Author
 
+<<<<<<< HEAD
 **Prashant Kumar Mishra**  
 GitHub: https://github.com/PrashantByte-28  
 LinkedIn: https://www.linkedin.com/in/prashant-kumar-mishra-356004261
 
 LinkedIn: https://www.linkedin.com/in/prashant-kumar-mishra-356004261
  (Readme file updated)
+=======
+**Prashant Kumar Mishra**
+
+- GitHub: https://github.com/PrashantByte-28
+- LinkedIn: https://www.linkedin.com/in/prashant-kumar-mishra-356004261
+
+---
+
+*Built as a machine learning portfolio project to demonstrate model development, API integration, containerization, and deployment.*
+>>>>>>> b8bfec9 (docs: improve VisaSight README and Docker instructions)
