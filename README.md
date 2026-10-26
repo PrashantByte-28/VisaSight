@@ -230,12 +230,6 @@ Python · Machine Learning · Supervised Learning · Classification · Random Fo
 
 ## Author
 
-**Prashant Kumar Mishra**  
-GitHub: https://github.com/PrashantByte-28  
-LinkedIn: https://www.linkedin.com/in/prashant-kumar-mishra-356004261
-
-LinkedIn: https://www.linkedin.com/in/prashant-kumar-mishra-356004261
- (Readme file updated)
 **Prashant Kumar Mishra**
 
 - GitHub: https://github.com/PrashantByte-28
