@@ -105,12 +105,18 @@ Make sure Docker Desktop (or the Docker Engine) is running, then build the image
 
 ```bash
 docker build -t visa-app .
+
+docker build -t visasight .
+ (Readme file updated)
 ```
 
 Run the container and map port 8080:
 
 ```bash
 docker run --rm -p 8080:8080 visa-app
+
+docker run --rm -p 8080:8080 visasight
+ (Readme file updated)
 ```
 
 Open http://localhost:8080 in your browser.
@@ -145,3 +151,6 @@ The prediction application is hosted on Vercel. The deployment serves the FastAP
 **Prashant Kumar Mishra**  
 GitHub: https://github.com/PrashantByte-28  
 LinkedIn: https://www.linkedin.com/in/prashant-kumar-mishra-356004261
+
+LinkedIn: https://www.linkedin.com/in/prashant-kumar-mishra-356004261
+ (Readme file updated)
