@@ -1,0 +1,11 @@
+cat > .dockerignore <<'EOF'
+.git
+artifact/
+logs/
+notebook/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+catboost_info/
+*.egg-info/
+EOF
