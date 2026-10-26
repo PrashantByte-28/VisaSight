@@ -104,13 +104,13 @@ Open http://localhost:8080 in your browser.
 Make sure Docker Desktop (or the Docker Engine) is running, then build the image from the repository root:
 
 ```bash
-docker build -t visasight .
+docker build -t visa-app .
 ```
 
 Run the container and map port 8080:
 
 ```bash
-docker run --rm -p 8080:8080 visasight
+docker run --rm -p 8080:8080 visa-app
 ```
 
 Open http://localhost:8080 in your browser.
